@@ -34,6 +34,10 @@
 //! [arbitrary]: ControlPlane#method.arbitrary
 //! [default]: ControlPlane#method.default
 
+#![no_std]
+
+extern crate alloc;
+
 #[cfg(not(feature = "chaos"))]
 mod zero_sized;
 #[cfg(not(feature = "chaos"))]

@@ -1,3 +1,5 @@
+use alloc::vec::Vec;
+
 use arbitrary::{Arbitrary, Unstructured};
 
 /// The control plane of chaos mode.
