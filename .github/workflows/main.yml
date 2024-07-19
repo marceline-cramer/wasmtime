@@ -431,7 +431,12 @@ jobs:
     # Checks for no_std support, ensure that crates can build on a no_std
     # target
     - run: rustup target add x86_64-unknown-none
-    - run: cargo check -p wasmtime --no-default-features --features runtime,gc,component-model
+    - run: |
+        cargo check -p wasmtime --no-default-features --features runtime,gc,component-model
+        cargo check -p cranelift-bforest
+        cargo check -p cranelift-control --features chaos
+        cargo check -p cranelift-control
+        cargo check -p cranelift-codegen
       env:
         CARGO_BUILD_TARGET: x86_64-unknown-none
 
