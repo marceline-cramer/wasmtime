@@ -437,6 +437,9 @@ jobs:
         cargo check -p cranelift-control --features chaos
         cargo check -p cranelift-control
         cargo check -p cranelift-codegen
+        cargo check -p wasmtime-environ
+        cargo check -p wasmtime-cranelift
+        cargo check -p wasmtime --no-default-features --features cranelift
       env:
         CARGO_BUILD_TARGET: x86_64-unknown-none
 
