@@ -436,7 +436,8 @@ jobs:
         cargo check -p cranelift-bforest
         cargo check -p cranelift-control --features chaos
         cargo check -p cranelift-control
-        cargo check -p cranelift-codegen
+        cargo check -p cranelift-codegen --no-default-features --features trace-log
+        cargo check -p cranelift-codegen --no-default-features --features unwind,trace-log
         cargo check -p wasmtime-environ
         cargo check -p wasmtime-cranelift
         cargo check -p wasmtime --no-default-features --features cranelift
