@@ -178,6 +178,7 @@ all = 'allow'
 [workspace.dependencies]
 # temporary arbitrary git dep until its PR is merged
 arbitrary = { git = "https://github.com/pitdicker/arbitrary", branch = "no_std", default-features = false, features = ["alloc"] }
+ahash = { version = "0.8", default-features = false }
 wasmtime-wmemcheck = { path = "crates/wmemcheck", version = "=24.0.0" }
 wasmtime = { path = "crates/wasmtime", version = "24.0.0", default-features = false }
 wasmtime-c-api-macros = { path = "crates/c-api-macros", version = "=24.0.0" }
@@ -277,7 +278,7 @@ windows-sys = "0.52.0"
 env_logger = "0.10"
 log = { version = "0.4.8", default-features = false }
 clap = { version = "4.3.12", default-features = false, features = ["std", "derive"] }
-hashbrown = { version = "0.14", default-features = false }
+hashbrown = { version = "0.14" }
 capstone = "0.12.0"
 once_cell = { version = "1.12.0", default-features = false }
 smallvec = { version = "1.6.1", features = ["union"] }

@@ -4,6 +4,7 @@
 //! node-internal data references some other storage (e.g., offsets into
 //! an array or pool of shared data).
 
+use ahash::AHasher;
 use hashbrown::raw::RawTable;
 use std::hash::{Hash, Hasher};
 
@@ -76,7 +77,7 @@ fn compute_hash<Ctx, K>(ctx: &Ctx, k: &K) -> u32
 where
     Ctx: CtxHash<K>,
 {
-    let mut hasher = rustc_hash::FxHasher::default();
+    let mut hasher = AHasher::default();
     ctx.ctx_hash(&mut hasher, k);
     hasher.finish() as u32
 }

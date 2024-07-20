@@ -13,7 +13,7 @@ use crate::trace;
 use alloc::vec::Vec;
 use cranelift_control::ControlPlane;
 use cranelift_entity::{packed_option::ReservedValue, SecondaryMap};
-use rustc_hash::{FxHashMap, FxHashSet};
+use hashbrown::{HashMap, HashSet};
 use smallvec::{smallvec, SmallVec};
 
 pub(crate) struct Elaborator<'a> {
@@ -53,7 +53,7 @@ pub(crate) struct Elaborator<'a> {
     /// Values that opt rules have indicated should be rematerialized
     /// in every block they are used (e.g., immediates or other
     /// "cheap-to-compute" ops).
-    remat_values: &'a FxHashSet<Value>,
+    remat_values: &'a HashSet<Value>,
     /// Explicitly-unrolled value elaboration stack.
     elab_stack: Vec<ElabStackEntry>,
     /// Results from the elab stack.
@@ -61,7 +61,7 @@ pub(crate) struct Elaborator<'a> {
     /// Explicitly-unrolled block elaboration stack.
     block_stack: Vec<BlockStackEntry>,
     /// Copies of values that have been rematerialized.
-    remat_copies: FxHashMap<(Block, Value), Value>,
+    remat_copies: HashMap<(Block, Value), Value>,
     /// Stats for various events during egraph processing, to help
     /// with optimization of this infrastructure.
     stats: &'a mut Stats,
@@ -141,7 +141,7 @@ impl<'a> Elaborator<'a> {
         func: &'a mut Function,
         domtree: &'a DominatorTreePreorder,
         loop_analysis: &'a LoopAnalysis,
-        remat_values: &'a FxHashSet<Value>,
+        remat_values: &'a HashSet<Value>,
         stats: &'a mut Stats,
         ctrl_plane: &'a mut ControlPlane,
     ) -> Self {
@@ -161,7 +161,7 @@ impl<'a> Elaborator<'a> {
             elab_stack: vec![],
             elab_result_stack: vec![],
             block_stack: vec![],
-            remat_copies: FxHashMap::default(),
+            remat_copies: HashMap::default(),
             stats,
             ctrl_plane,
         }
@@ -377,9 +377,9 @@ impl<'a> Elaborator<'a> {
     /// `arg` and rewrite `arg` to refer to it, if needed. Returns
     /// `true` if a rewrite occurred.
     fn maybe_remat_arg(
-        remat_values: &FxHashSet<Value>,
+        remat_values: &HashSet<Value>,
         func: &mut Function,
-        remat_copies: &mut FxHashMap<(Block, Value), Value>,
+        remat_copies: &mut HashMap<(Block, Value), Value>,
         insert_block: Block,
         before: Inst,
         arg: &mut ElaboratedValue,

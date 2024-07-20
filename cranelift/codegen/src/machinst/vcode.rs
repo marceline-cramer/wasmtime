@@ -25,16 +25,14 @@ use crate::timing;
 use crate::trace;
 use crate::CodegenError;
 use crate::{LabelValueLoc, ValueLocRange};
+use hashbrown::{hash_map::Entry, HashMap};
 use regalloc2::{
     Edit, Function as RegallocFunction, InstOrEdit, InstRange, MachineEnv, Operand,
     OperandConstraint, OperandKind, PRegSet, RegClass,
 };
-use rustc_hash::FxHashMap;
 
 use core::mem::take;
 use cranelift_entity::{entity_impl, Keys};
-use std::collections::hash_map::Entry;
-use std::collections::HashMap;
 use std::fmt;
 
 /// Index referring to an instruction in VCode.
@@ -100,7 +98,7 @@ pub struct VCode<I: VCodeInst> {
     /// This is a sparse side table that only has entries for instructions that
     /// are safepoints, and only for a subset of those that have an associated
     /// user stack map.
-    user_stack_maps: FxHashMap<BackwardsInsnIndex, ir::UserStackMap>,
+    user_stack_maps: HashMap<BackwardsInsnIndex, ir::UserStackMap>,
 
     /// Operands: pre-regalloc references to virtual registers with
     /// constraints, in one flattened array. This allows the regalloc
@@ -114,7 +112,7 @@ pub struct VCode<I: VCodeInst> {
     operand_ranges: Ranges,
 
     /// Clobbers: a sparse map from instruction indices to clobber masks.
-    clobbers: FxHashMap<InsnIndex, PRegSet>,
+    clobbers: HashMap<InsnIndex, PRegSet>,
 
     /// Source locations for each instruction. (`SourceLoc` is a `u32`, so it is
     /// reasonable to keep one of these per instruction.)
@@ -265,7 +263,7 @@ pub struct VCodeBuilder<I: VCodeInst> {
     /// Debug-value label in-progress map, keyed by label. For each
     /// label, we keep disjoint ranges mapping to vregs. We'll flatten
     /// this into (vreg, range, label) tuples when done.
-    debug_info: FxHashMap<ValueLabel, Vec<(InsnIndex, InsnIndex, VReg)>>,
+    debug_info: HashMap<ValueLabel, Vec<(InsnIndex, InsnIndex, VReg)>>,
 }
 
 /// Direction in which a VCodeBuilder builds VCode.
@@ -292,7 +290,7 @@ impl<I: VCodeInst> VCodeBuilder<I> {
         VCodeBuilder {
             vcode,
             direction,
-            debug_info: FxHashMap::default(),
+            debug_info: HashMap::default(),
         }
     }
 
@@ -634,10 +632,10 @@ impl<I: VCodeInst> VCode<I> {
             sigs,
             vreg_types: vec![],
             insts: Vec::with_capacity(10 * n_blocks),
-            user_stack_maps: FxHashMap::default(),
+            user_stack_maps: HashMap::default(),
             operands: Vec::with_capacity(30 * n_blocks),
             operand_ranges: Ranges::with_capacity(10 * n_blocks),
-            clobbers: FxHashMap::default(),
+            clobbers: HashMap::default(),
             srclocs: Vec::with_capacity(10 * n_blocks),
             entry: BlockIndex::new(0),
             block_ranges: Ranges::with_capacity(n_blocks),
@@ -1508,7 +1506,7 @@ pub struct VRegAllocator<I> {
     /// We use these aliases to rename an instruction's expected
     /// result vregs to the returned vregs from lowering, which are
     /// usually freshly-allocated temps.
-    vreg_aliases: FxHashMap<regalloc2::VReg, regalloc2::VReg>,
+    vreg_aliases: HashMap<regalloc2::VReg, regalloc2::VReg>,
 
     /// A deferred error, to be bubbled up to the top level of the
     /// lowering algorithm. We take this approach because we cannot
@@ -1532,7 +1530,7 @@ impl<I: VCodeInst> VRegAllocator<I> {
         Self {
             vreg_types,
             reftyped_vregs: vec![],
-            vreg_aliases: FxHashMap::with_capacity_and_hasher(capacity, Default::default()),
+            vreg_aliases: HashMap::with_capacity_and_hasher(capacity, Default::default()),
             deferred_error: None,
             facts: Vec::with_capacity(capacity),
             _inst: core::marker::PhantomData::default(),

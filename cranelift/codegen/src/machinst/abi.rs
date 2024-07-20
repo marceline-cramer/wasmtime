@@ -106,10 +106,9 @@ use crate::settings::ProbestackStrategy;
 use crate::CodegenError;
 use crate::{ir, isa};
 use crate::{machinst::*, trace};
+use hashbrown::HashMap;
 use regalloc2::{MachineEnv, PReg, PRegSet};
-use rustc_hash::FxHashMap;
 use smallvec::smallvec;
-use std::collections::HashMap;
 use std::marker::PhantomData;
 use std::mem;
 
@@ -684,7 +683,7 @@ impl SigData {
 /// This type can be indexed by `Sig` to access its associated `SigData`.
 pub struct SigSet {
     /// Interned `ir::Signature`s that we already have an ABI signature for.
-    ir_signature_to_abi_sig: FxHashMap<ir::Signature, Sig>,
+    ir_signature_to_abi_sig: HashMap<ir::Signature, Sig>,
 
     /// Interned `ir::SigRef`s that we already have an ABI signature for.
     ir_sig_ref_to_abi_sig: SecondaryMap<ir::SigRef, Option<Sig>>,
@@ -708,7 +707,7 @@ impl SigSet {
         let arg_estimate = func.dfg.signatures.len() * 6;
 
         let mut sigs = SigSet {
-            ir_signature_to_abi_sig: FxHashMap::default(),
+            ir_signature_to_abi_sig: HashMap::default(),
             ir_sig_ref_to_abi_sig: SecondaryMap::with_capacity(func.dfg.signatures.len()),
             abi_args: Vec::with_capacity(arg_estimate),
             sigs: PrimaryMap::with_capacity(1 + func.dfg.signatures.len()),
