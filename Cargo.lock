@@ -3662,6 +3662,7 @@ dependencies = [
  "cranelift-native",
  "cranelift-wasm",
  "gimli 0.28.1",
+ "hashbrown 0.14.5",
  "log",
  "object",
  "target-lexicon",
