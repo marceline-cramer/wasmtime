@@ -143,8 +143,6 @@ impl<'a> Codegen<'a> {
             .unwrap();
         }
 
-        writeln!(code, "#![no_std]").unwrap();
-        writeln!(code, "extern crate alloc;").unwrap();
         writeln!(code, "\nuse super::*;  // Pulls in all external types.").unwrap();
         writeln!(code, "use core::marker::PhantomData;").unwrap();
     }
