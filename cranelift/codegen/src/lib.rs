@@ -18,6 +18,11 @@ extern crate alloc;
 #[macro_use]
 extern crate std;
 
+// Supports compiling ISLE.
+#[cfg(not(feature = "std"))]
+#[macro_use]
+extern crate core as std;
+
 use hashbrown::{hash_map, HashMap};
 
 pub use crate::context::Context;

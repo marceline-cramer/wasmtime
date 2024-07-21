@@ -20,6 +20,7 @@ ahash = { workspace = true }
 anyhow = { workspace = true, optional = true, features = ['std'] }
 bumpalo = "3"
 capstone = { workspace = true, optional = true }
+core_maths = "0.1"
 cranelift-codegen-shared = { path = "./shared", version = "0.111.0" }
 cranelift-entity = { workspace = true }
 cranelift-bforest = { workspace = true }
