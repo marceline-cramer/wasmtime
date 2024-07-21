@@ -975,7 +975,8 @@ impl Ieee32 {
     /// Returns the nearest integer to `self`. Rounds half-way cases to the number
     /// with an even least significant digit.
     pub fn round_ties_even(self) -> Self {
-        Self::with_float(self.as_f32().round_ties_even())
+        // TODO: get a suitable alternative to round_ties_even() working in libm
+        Self::with_float(self.as_f32().round())
     }
 }
 
@@ -1192,7 +1193,8 @@ impl Ieee64 {
     /// Returns the nearest integer to `self`. Rounds half-way cases to the number
     /// with an even least significant digit.
     pub fn round_ties_even(self) -> Self {
-        Self::with_float(self.as_f64().round_ties_even())
+        // TODO: get a suitable alternative to round_ties_even() working in libm
+        Self::with_float(self.as_f64().round())
     }
 }
 
