@@ -50,7 +50,7 @@ env_logger = { workspace = true }
 
 [build-dependencies]
 cranelift-codegen-meta = { path = "meta", version = "0.111.0" }
-cranelift-isle = { path = "../isle/isle", version = "=0.111.0" }
+cranelift-isle = { path = "../isle/isle", version = "=0.111.0", features = ["no_std"] }
 
 [features]
 default = ["std", "unwind", "host-arch", "timing"]
