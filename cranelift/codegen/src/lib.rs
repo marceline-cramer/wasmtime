@@ -1,5 +1,6 @@
 //! Cranelift code generation library.
 #![deny(missing_docs)]
+#![allow(unstable_features)]
 #![feature(thread_local)]
 #![no_std]
 // Various bits and pieces of this crate might only be used for one platform or
