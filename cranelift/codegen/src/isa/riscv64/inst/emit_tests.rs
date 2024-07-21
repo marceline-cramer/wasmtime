@@ -1,7 +1,7 @@
 #[allow(unused)]
 use crate::ir::LibCall;
 use crate::isa::riscv64::inst::*;
-use std::borrow::Cow;
+use core::borrow::Cow;
 
 fn fa7() -> Reg {
     f_reg(17)

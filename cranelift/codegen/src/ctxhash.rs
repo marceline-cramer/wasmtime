@@ -5,8 +5,8 @@
 //! an array or pool of shared data).
 
 use ahash::AHasher;
+use core::hash::{Hash, Hasher};
 use hashbrown::raw::RawTable;
-use std::hash::{Hash, Hasher};
 
 /// Trait that allows for equality comparison given some external
 /// context.
@@ -95,7 +95,7 @@ impl<K, V> CtxHashMap<K, V> {
         }) {
             Some(bucket) => {
                 let data = unsafe { bucket.as_mut() };
-                Some(std::mem::replace(&mut data.v, v))
+                Some(core::mem::replace(&mut data.v, v))
             }
             None => {
                 let data = BucketData { hash, k, v };

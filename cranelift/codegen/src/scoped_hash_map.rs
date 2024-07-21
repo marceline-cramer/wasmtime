@@ -8,10 +8,7 @@ use core::hash::Hash;
 use hashbrown::HashMap;
 use smallvec::{smallvec, SmallVec};
 
-#[cfg(not(feature = "std"))]
-use crate::fx::Hasher;
-#[cfg(not(feature = "std"))]
-type Hasher = core::hash::BuildHasherDefault<Hasher>;
+type Hasher = core::hash::BuildHasherDefault<ahash::AHasher>;
 
 struct Val<V> {
     value: V,

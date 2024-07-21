@@ -2,12 +2,13 @@
 //!
 //! This modules provides facilities for timing the execution of individual compilation passes.
 
-use core::fmt;
-use std::any::Any;
-use std::boxed::Box;
-use std::cell::RefCell;
-use std::mem;
-use std::time::Duration;
+use alloc::boxed::Box;
+use alloc::fmt;
+use core::any::Any;
+use core::cell::RefCell;
+use core::mem;
+use core::ops::DerefMut;
+use core::time::Duration;
 
 // Each pass that can be timed is predefined with the `define_passes!` macro. Each pass has a
 // snake_case name and a plain text description used when printing out the timing report.
@@ -111,22 +112,26 @@ pub trait Profiler {
 }
 
 // Information about passes in a single thread.
-thread_local! {
-    static PROFILER: RefCell<Box<dyn Profiler>> = RefCell::new(Box::new(DefaultProfiler));
-}
+#[thread_local]
+static PROFILER: RefCell<Option<Box<dyn Profiler>>> = RefCell::new(None);
 
 /// Set the profiler for the current thread.
 ///
 /// Returns the old profiler.
 pub fn set_thread_profiler(new_profiler: Box<dyn Profiler>) -> Box<dyn Profiler> {
-    PROFILER.with(|profiler| std::mem::replace(&mut *profiler.borrow_mut(), new_profiler))
+    PROFILER
+        .borrow_mut()
+        .replace(new_profiler)
+        .unwrap_or_else(|| Box::new(DefaultProfiler))
 }
 
 /// Start timing `pass` as a child of the currently running pass, if any.
 ///
 /// This function is called by the publicly exposed pass functions.
 fn start_pass(pass: Pass) -> Box<dyn Any> {
-    PROFILER.with(|profiler| profiler.borrow().start_pass(pass))
+    let mut profiler = PROFILER.borrow_mut();
+    let inner = profiler.get_or_insert_with(|| Box::new(DefaultProfiler));
+    inner.start_pass(pass)
 }
 
 /// Accumulated timing information for a single pass.
@@ -197,9 +202,13 @@ impl fmt::Display for PassTimes {
 }
 
 // Information about passes in a single thread.
-thread_local! {
-    static PASS_TIME: RefCell<PassTimes> = RefCell::new(Default::default());
-}
+#[thread_local]
+static PASS_TIME: RefCell<PassTimes> = RefCell::new(PassTimes {
+    pass: [PassTime {
+        total: Duration::new(0, 0),
+        child: Duration::new(0, 0),
+    }; NUM_PASSES],
+});
 
 /// The default profiler. You can get the results using [`take_current`].
 pub struct DefaultProfiler;
@@ -208,25 +217,25 @@ pub struct DefaultProfiler;
 ///
 /// Only applies when [`DefaultProfiler`] is used.
 pub fn take_current() -> PassTimes {
-    PASS_TIME.with(|rc| mem::take(&mut *rc.borrow_mut()))
+    let mut rc = PASS_TIME.borrow_mut();
+    mem::take(rc.deref_mut())
 }
 
 #[cfg(feature = "timing")]
 mod enabled {
     use super::{DefaultProfiler, Pass, Profiler, PASS_TIME};
-    use std::any::Any;
-    use std::boxed::Box;
-    use std::cell::Cell;
+    use alloc::boxed::Box;
+    use core::any::Any;
+    use core::cell::Cell;
     use std::time::Instant;
 
     // Information about passes in a single thread.
-    thread_local! {
-        static CURRENT_PASS: Cell<Pass> = const { Cell::new(Pass::None) };
-    }
+    #[thread_local]
+    static CURRENT_PASS: Cell<Pass> = const { Cell::new(Pass::None) };
 
     impl Profiler for DefaultProfiler {
         fn start_pass(&self, pass: Pass) -> Box<dyn Any> {
-            let prev = CURRENT_PASS.with(|p| p.replace(pass));
+            let prev = CURRENT_PASS.replace(pass);
             log::debug!("timing: Starting {}, (during {})", pass, prev);
             Box::new(DefaultTimingToken {
                 start: Instant::now(),
@@ -257,15 +266,13 @@ mod enabled {
         fn drop(&mut self) {
             let duration = self.start.elapsed();
             log::debug!("timing: Ending {}: {}ms", self.pass, duration.as_millis());
-            let old_cur = CURRENT_PASS.with(|p| p.replace(self.prev));
+            let old_cur = CURRENT_PASS.replace(self.prev);
             debug_assert_eq!(self.pass, old_cur, "Timing tokens dropped out of order");
-            PASS_TIME.with(|rc| {
-                let mut table = rc.borrow_mut();
-                table.pass[self.pass.idx()].total += duration;
-                if let Some(parent) = table.pass.get_mut(self.prev.idx()) {
-                    parent.child += duration;
-                }
-            })
+            let mut table = PASS_TIME.borrow_mut();
+            table.pass[self.pass.idx()].total += duration;
+            if let Some(parent) = table.pass.get_mut(self.prev.idx()) {
+                parent.child += duration;
+            }
         }
     }
 }
@@ -273,8 +280,8 @@ mod enabled {
 #[cfg(not(feature = "timing"))]
 mod disabled {
     use super::{DefaultProfiler, Pass, Profiler};
-    use std::any::Any;
-    use std::boxed::Box;
+    use alloc::boxed::Box;
+    use core::any::Any;
 
     impl Profiler for DefaultProfiler {
         fn start_pass(&self, _pass: Pass) -> Box<dyn Any> {

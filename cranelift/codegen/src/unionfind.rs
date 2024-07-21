@@ -2,8 +2,8 @@
 
 use crate::trace;
 use cranelift_entity::{packed_option::ReservedValue, EntityRef, SecondaryMap};
-use std::hash::Hash;
-use std::mem::swap;
+use core::hash::Hash;
+use core::mem::swap;
 
 /// A union-find data structure. The data structure can allocate
 /// `Idx`s, indicating eclasses, and can merge eclasses together.
@@ -51,7 +51,7 @@ impl<Idx: EntityRef + ReservedValue> Default for Val<Idx> {
     }
 }
 
-impl<Idx: EntityRef + Hash + std::fmt::Display + Ord + ReservedValue> UnionFind<Idx> {
+impl<Idx: EntityRef + Hash + core::fmt::Display + Ord + ReservedValue> UnionFind<Idx> {
     /// Create a new `UnionFind` with the given capacity.
     pub fn with_capacity(cap: usize) -> Self {
         UnionFind {

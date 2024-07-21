@@ -13,6 +13,9 @@ use core::{i32, u32};
 #[cfg(feature = "enable-serde")]
 use serde_derive::{Deserialize, Serialize};
 
+#[cfg(not(feature = "std"))]
+use core_maths::CoreFloat;
+
 /// Convert a type into a vector of bytes; all implementors in this file must use little-endian
 /// orderings of bytes to match WebAssembly's little-endianness.
 pub trait IntoBytes {
