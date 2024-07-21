@@ -27,9 +27,9 @@
 use crate::ir;
 use alloc::string::String;
 use alloc::vec::Vec;
-use core::collections::{HashMap, HashSet};
-use core::sync::mpsc;
+use hashbrown::{HashMap, HashSet};
 use souper_ir::ast;
+use std::sync::mpsc;
 
 /// Harvest Souper left-hand side candidates from the given function.
 ///

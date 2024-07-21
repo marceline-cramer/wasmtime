@@ -5,9 +5,10 @@
 use alloc::boxed::Box;
 use alloc::fmt;
 use core::any::Any;
-use core::cell::RefCell;
-use core::mem;
 use core::time::Duration;
+
+#[cfg(feature = "timing")]
+use core::cell::RefCell;
 
 // Each pass that can be timed is predefined with the `define_passes!` macro. Each pass has a
 // snake_case name and a plain text description used when printing out the timing report.
@@ -227,7 +228,7 @@ pub struct DefaultProfiler;
 pub fn take_current() -> PassTimes {
     #[cfg(feature = "timing")]
     {
-        PASS_TIME.with(|rc| mem::take(&mut *rc.borrow_mut()))
+        PASS_TIME.with(|rc| core::mem::take(&mut *rc.borrow_mut()))
     }
     #[cfg(not(feature = "timing"))]
     {

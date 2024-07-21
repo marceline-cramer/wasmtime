@@ -112,7 +112,7 @@ incremental-cache = [
 ]
 
 # Enable support for the Souper harvester.
-souper-harvest = ["souper-ir", "souper-ir/stringify"]
+souper-harvest = ["souper-ir", "souper-ir/stringify", "std"]
 
 # Report any ISLE errors in pretty-printed style.
 isle-errors = ["cranelift-isle/fancy-errors"]
