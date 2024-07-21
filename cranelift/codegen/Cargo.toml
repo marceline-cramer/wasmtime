@@ -99,6 +99,7 @@ enable-serde = [
     "serde_derive",
     "cranelift-entity/enable-serde",
     "cranelift-bitset/enable-serde",
+    "hashbrown/serde",
     "regalloc2/enable-serde",
     "smallvec/serde"
 ]
@@ -123,7 +124,7 @@ isle-in-source-tree = []
 # Enable tracking how long passes take in Cranelift.
 #
 # Enabled by default.
-timing = []
+timing = ["std"]
 
 [[bench]]
 name = "x64-evex-encoding"

@@ -1833,7 +1833,7 @@ mod tests {
     fn fcvt_to_sint_negative_overflow_ieee32() {
         for n in &[8, 16] {
             assert_eq!(-((1u32 << (n - 1)) as f32) - 1.0, unsafe {
-                mem::transmute(Ieee32::fcvt_to_sint_negative_overflow(*n))
+                mem::transmute::<_, f32>(Ieee32::fcvt_to_sint_negative_overflow(*n))
             });
         }
     }
@@ -1971,7 +1971,7 @@ mod tests {
     fn fcvt_to_sint_negative_overflow_ieee64() {
         for n in &[8, 16, 32] {
             assert_eq!(-((1u64 << (n - 1)) as f64) - 1.0, unsafe {
-                mem::transmute(Ieee64::fcvt_to_sint_negative_overflow(*n))
+                mem::transmute::<_, f32>(Ieee64::fcvt_to_sint_negative_overflow(*n))
             });
         }
     }

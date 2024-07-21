@@ -7,7 +7,6 @@ use alloc::fmt;
 use core::any::Any;
 use core::cell::RefCell;
 use core::mem;
-use core::ops::DerefMut;
 use core::time::Duration;
 
 // Each pass that can be timed is predefined with the `define_passes!` macro. Each pass has a
@@ -112,26 +111,38 @@ pub trait Profiler {
 }
 
 // Information about passes in a single thread.
-#[thread_local]
-static PROFILER: RefCell<Option<Box<dyn Profiler>>> = RefCell::new(None);
+#[cfg(feature = "timing")]
+thread_local! {
+    static PROFILER: RefCell<Box<dyn Profiler>> = RefCell::new(Box::new(DefaultProfiler));
+}
 
 /// Set the profiler for the current thread.
 ///
 /// Returns the old profiler.
 pub fn set_thread_profiler(new_profiler: Box<dyn Profiler>) -> Box<dyn Profiler> {
-    PROFILER
-        .borrow_mut()
-        .replace(new_profiler)
-        .unwrap_or_else(|| Box::new(DefaultProfiler))
+    #[cfg(feature = "timing")]
+    {
+        PROFILER.with(|profiler| core::mem::replace(&mut *profiler.borrow_mut(), new_profiler))
+    }
+    #[cfg(not(feature = "timing"))]
+    {
+        new_profiler
+    }
 }
 
 /// Start timing `pass` as a child of the currently running pass, if any.
 ///
 /// This function is called by the publicly exposed pass functions.
+#[allow(unused_variables)]
 fn start_pass(pass: Pass) -> Box<dyn Any> {
-    let mut profiler = PROFILER.borrow_mut();
-    let inner = profiler.get_or_insert_with(|| Box::new(DefaultProfiler));
-    inner.start_pass(pass)
+    #[cfg(feature = "timing")]
+    {
+        PROFILER.with(|profiler| profiler.borrow().start_pass(pass))
+    }
+    #[cfg(not(feature = "timing"))]
+    {
+        Box::new(())
+    }
 }
 
 /// Accumulated timing information for a single pass.
@@ -202,13 +213,10 @@ impl fmt::Display for PassTimes {
 }
 
 // Information about passes in a single thread.
-#[thread_local]
-static PASS_TIME: RefCell<PassTimes> = RefCell::new(PassTimes {
-    pass: [PassTime {
-        total: Duration::new(0, 0),
-        child: Duration::new(0, 0),
-    }; NUM_PASSES],
-});
+#[cfg(feature = "timing")]
+thread_local! {
+    static PASS_TIME: RefCell<PassTimes> = RefCell::new(Default::default());
+}
 
 /// The default profiler. You can get the results using [`take_current`].
 pub struct DefaultProfiler;
@@ -217,8 +225,14 @@ pub struct DefaultProfiler;
 ///
 /// Only applies when [`DefaultProfiler`] is used.
 pub fn take_current() -> PassTimes {
-    let mut rc = PASS_TIME.borrow_mut();
-    mem::take(rc.deref_mut())
+    #[cfg(feature = "timing")]
+    {
+        PASS_TIME.with(|rc| mem::take(&mut *rc.borrow_mut()))
+    }
+    #[cfg(not(feature = "timing"))]
+    {
+        PassTimes::default()
+    }
 }
 
 #[cfg(feature = "timing")]
@@ -230,12 +244,13 @@ mod enabled {
     use std::time::Instant;
 
     // Information about passes in a single thread.
-    #[thread_local]
-    static CURRENT_PASS: Cell<Pass> = const { Cell::new(Pass::None) };
+    thread_local! {
+        static CURRENT_PASS: Cell<Pass> = const { Cell::new(Pass::None) };
+    }
 
     impl Profiler for DefaultProfiler {
         fn start_pass(&self, pass: Pass) -> Box<dyn Any> {
-            let prev = CURRENT_PASS.replace(pass);
+            let prev = CURRENT_PASS.with(|p| p.replace(pass));
             log::debug!("timing: Starting {}, (during {})", pass, prev);
             Box::new(DefaultTimingToken {
                 start: Instant::now(),
@@ -266,13 +281,15 @@ mod enabled {
         fn drop(&mut self) {
             let duration = self.start.elapsed();
             log::debug!("timing: Ending {}: {}ms", self.pass, duration.as_millis());
-            let old_cur = CURRENT_PASS.replace(self.prev);
+            let old_cur = CURRENT_PASS.with(|p| p.replace(self.prev));
             debug_assert_eq!(self.pass, old_cur, "Timing tokens dropped out of order");
-            let mut table = PASS_TIME.borrow_mut();
-            table.pass[self.pass.idx()].total += duration;
-            if let Some(parent) = table.pass.get_mut(self.prev.idx()) {
-                parent.child += duration;
-            }
+            PASS_TIME.with(|rc| {
+                let mut table = rc.borrow_mut();
+                table.pass[self.pass.idx()].total += duration;
+                if let Some(parent) = table.pass.get_mut(self.prev.idx()) {
+                    parent.child += duration;
+                }
+            })
         }
     }
 }

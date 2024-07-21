@@ -8,8 +8,6 @@ use core::hash::Hash;
 use hashbrown::HashMap;
 use smallvec::{smallvec, SmallVec};
 
-type Hasher = core::hash::BuildHasherDefault<ahash::AHasher>;
-
 struct Val<V> {
     value: V,
     level: u32,
