@@ -34,6 +34,9 @@ use core::cell::Cell;
 use regalloc2::PReg;
 use smallvec::smallvec;
 
+#[cfg(not(feature = "std"))]
+use core_maths::CoreFloat;
+
 /// Information describing a library call to be emitted.
 pub struct LibCallInfo {
     libcall: LibCall,

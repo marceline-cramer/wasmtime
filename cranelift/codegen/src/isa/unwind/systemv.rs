@@ -23,7 +23,7 @@ pub enum RegisterMappingError {
 
 // This is manually implementing Error and Display instead of using thiserror to reduce the amount
 // of dependencies used by Cranelift.
-impl core::error::Error for RegisterMappingError {}
+impl std::error::Error for RegisterMappingError {}
 
 impl core::fmt::Display for RegisterMappingError {
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {

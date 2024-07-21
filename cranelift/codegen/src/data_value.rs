@@ -274,7 +274,7 @@ pub enum DataValueCastFailure {
 
 // This is manually implementing Error and Display instead of using thiserror to reduce the amount
 // of dependencies used by Cranelift.
-impl core::error::Error for DataValueCastFailure {}
+impl std::error::Error for DataValueCastFailure {}
 
 impl Display for DataValueCastFailure {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
