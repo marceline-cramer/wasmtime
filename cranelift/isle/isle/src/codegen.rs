@@ -13,6 +13,9 @@ pub struct CodegenOptions {
     /// Do not include the `#![allow(...)]` pragmas in the generated
     /// source. Useful if it must be include!()'d elsewhere.
     pub exclude_global_allow_pragmas: bool,
+
+    /// Use `core` and `alloc` instead of `std`, for `no_std`-compatible code.
+    pub no_std: bool,
 }
 
 /// Emit Rust source code for the given type and term environments.
@@ -145,7 +148,7 @@ impl<'a> Codegen<'a> {
 
         writeln!(code, "\nuse super::*;  // Pulls in all external types.").unwrap();
 
-        if cfg!(feature = "no_std") {
+        if options.no_std {
             writeln!(code, "use alloc::vec::Vec;").unwrap();
             writeln!(code, "use core::{{marker::PhantomData, ops}};").unwrap();
         } else {

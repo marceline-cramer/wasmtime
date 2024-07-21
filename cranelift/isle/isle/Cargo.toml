@@ -20,6 +20,5 @@ tempfile = "3"
 
 [features]
 default = []
-no_std = []
 logging = ["log"]
 fancy-errors = ["codespan-reporting"]
