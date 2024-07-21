@@ -1,9 +1,9 @@
 //! Simple union-find data structure.
 
 use crate::trace;
-use cranelift_entity::{packed_option::ReservedValue, EntityRef, SecondaryMap};
 use core::hash::Hash;
 use core::mem::swap;
+use cranelift_entity::{packed_option::ReservedValue, EntityRef, SecondaryMap};
 
 /// A union-find data structure. The data structure can allocate
 /// `Idx`s, indicating eclasses, and can merge eclasses together.

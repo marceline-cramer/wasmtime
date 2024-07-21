@@ -11,10 +11,10 @@ use crate::isa::{CallConv, FunctionAlignment};
 use crate::{machinst::*, trace};
 use crate::{settings, CodegenError, CodegenResult};
 use alloc::boxed::Box;
+use alloc::string::{String, ToString};
+use core::fmt::{self, Write};
 use regalloc2::PRegSet;
 use smallvec::{smallvec, SmallVec};
-use core::fmt::{self, Write};
-use alloc::string::{String, ToString};
 
 pub mod args;
 mod emit;

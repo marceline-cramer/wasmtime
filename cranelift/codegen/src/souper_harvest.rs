@@ -25,11 +25,11 @@
 //! candidate.
 
 use crate::ir;
-use souper_ir::ast;
-use core::collections::{HashMap, HashSet};
 use alloc::string::String;
-use core::sync::mpsc;
 use alloc::vec::Vec;
+use core::collections::{HashMap, HashSet};
+use core::sync::mpsc;
+use souper_ir::ast;
 
 /// Harvest Souper left-hand side candidates from the given function.
 ///
