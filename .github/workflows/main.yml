@@ -428,21 +428,6 @@ jobs:
         submodules: true
     - uses: ./.github/actions/install-rust
 
-    # Checks for no_std support, ensure that crates can build on a no_std
-    # target
-    - run: rustup target add x86_64-unknown-none
-    - run: |
-        cargo check -p wasmtime --no-default-features --features runtime,gc,component-model
-        cargo check -p cranelift-bforest
-        cargo check -p cranelift-control --features chaos
-        cargo check -p cranelift-control
-        cargo check -p cranelift-codegen --no-default-features --features all-arch,trace-log
-        cargo check -p wasmtime-environ
-        cargo check -p wasmtime-cranelift
-        cargo check -p wasmtime --no-default-features --features cranelift
-      env:
-        CARGO_BUILD_TARGET: x86_64-unknown-none
-
     # Check that wasmtime compiles with panic=abort since there's some `#[cfg]`
     # for specifically panic=abort there.
     - run: cargo check -p wasmtime
@@ -522,6 +507,21 @@ jobs:
     - uses: ./.github/actions/install-rust
       with:
         toolchain: wasmtime-ci-pinned-nightly
+
+    # Checks for no_std support, ensure that crates can build on a no_std
+    # target using the nightly toolchain
+    - run: rustup target add x86_64-unknown-none
+    - run: |
+        cargo check -p wasmtime --no-default-features --features runtime,gc,component-model
+        cargo check -p cranelift-bforest
+        cargo check -p cranelift-control --features chaos
+        cargo check -p cranelift-control
+        cargo check -p cranelift-codegen --no-default-features --features all-arch,trace-log
+        cargo check -p wasmtime-environ
+        cargo check -p wasmtime-cranelift
+        cargo check -p wasmtime --no-default-features --features cranelift
+      env:
+        CARGO_BUILD_TARGET: x86_64-unknown-none
 
     # Ensure that fuzzers still build.
     #
