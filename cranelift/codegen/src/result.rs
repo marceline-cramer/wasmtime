@@ -52,6 +52,7 @@ pub type CodegenResult<T> = Result<T, CodegenError>;
 
 // This is manually implementing Error and Display instead of using thiserror to reduce the amount
 // of dependencies used by Cranelift.
+#[cfg(feature = "std")]
 impl std::error::Error for CodegenError {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
