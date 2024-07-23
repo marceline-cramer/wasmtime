@@ -434,7 +434,7 @@ jobs:
     - run: |
         cargo check -p wasmtime --no-default-features --features runtime,gc,component-model
         cargo check -p cranelift-control --no-default-features
-        cargo check --no-default-features --features all-arch,trace-log
+        cargo check -p cranelift-codegen --no-default-features --features all-arch,trace-log
       env:
         CARGO_BUILD_TARGET: x86_64-unknown-none
 
