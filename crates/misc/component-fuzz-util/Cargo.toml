@@ -11,7 +11,7 @@ workspace = true
 
 [dependencies]
 anyhow = { workspace = true }
-arbitrary = { workspace = true, features = ["std", "derive"] }
+arbitrary = { workspace = true, features = ["derive"] }
 proc-macro2 = "1.0"
 quote = "1.0"
 wasmtime-component-util = { workspace = true }

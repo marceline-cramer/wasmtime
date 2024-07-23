@@ -15,7 +15,7 @@ rust-version.workspace = true
 
 [package.metadata.binstall]
 pkg-url = "{repo}/releases/download/v{version}/wasmtime-v{version}-{target-arch}-{target-family}{archive-suffix}"
-bin-dir = "wasmtime-{version}-{target-arch}-{target-family}/{bin}{binary-ext}"
+bin-dir = "wasmtime-v{version}-{target-arch}-{target-family}/{bin}{binary-ext}"
 pkg-fmt = "txz"
 [package.metadata.binstall.overrides.x86_64-apple-darwin]
 pkg-url = "{repo}/releases/download/v{version}/wasmtime-v{version}-{target-arch}-macos{archive-suffix}"
@@ -176,8 +176,7 @@ unused-lifetimes = 'warn'
 all = 'allow'
 
 [workspace.dependencies]
-# temporary arbitrary git dep until its PR is merged
-arbitrary = { git = "https://github.com/pitdicker/arbitrary", branch = "no_std", default-features = false, features = ["alloc"] }
+arbitrary = { version = "1.3.1" }
 ahash = { version = "0.8", default-features = false }
 wasmtime-wmemcheck = { path = "crates/wmemcheck", version = "=24.0.0" }
 wasmtime = { path = "crates/wasmtime", version = "24.0.0", default-features = false }

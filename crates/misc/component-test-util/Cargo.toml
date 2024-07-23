@@ -9,5 +9,5 @@ publish = false
 [dependencies]
 env_logger = { workspace = true }
 anyhow = { workspace = true }
-arbitrary = { workspace = true, features = ["std", "derive"] }
+arbitrary = { workspace = true, features = ["derive"] }
 wasmtime = { workspace = true, features = ["component-model", "async"] }
