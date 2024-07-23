@@ -126,15 +126,7 @@ version = "1.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2e1373abdaa212b704512ec2bd8b26bd0b7d5c3f70117411a5d9a451383c859"
 dependencies = [
- "derive_arbitrary 1.3.1",
-]
-
-[[package]]
-name = "arbitrary"
-version = "1.3.2"
-source = "git+https://github.com/pitdicker/arbitrary?branch=no_std#3b795c801defd2a9b6df139a83d27140f766a495"
-dependencies = [
- "derive_arbitrary 1.3.2",
+ "derive_arbitrary",
 ]
 
 [[package]]
@@ -496,7 +488,7 @@ name = "component-fuzz-util"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "arbitrary 1.3.2",
+ "arbitrary",
  "proc-macro2",
  "quote",
  "wasmtime-component-util",
@@ -524,7 +516,7 @@ name = "component-test-util"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "arbitrary 1.3.2",
+ "arbitrary",
  "env_logger",
  "wasmtime",
 ]
@@ -653,7 +645,7 @@ version = "0.111.0"
 name = "cranelift-control"
 version = "0.111.0"
 dependencies = [
- "arbitrary 1.3.2",
+ "arbitrary",
 ]
 
 [[package]]
@@ -712,7 +704,7 @@ name = "cranelift-fuzzgen"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "arbitrary 1.3.2",
+ "arbitrary",
  "cranelift",
  "cranelift-native",
  "once_cell",
@@ -986,16 +978,6 @@ name = "derive_arbitrary"
 version = "1.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "53e0efad4403bfc52dc201159c4b842a246a14b98c64b55dfd0f2d89729dfeb8"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.60",
-]
-
-[[package]]
-name = "derive_arbitrary"
-version = "1.3.2"
-source = "git+https://github.com/pitdicker/arbitrary?branch=no_std#3b795c801defd2a9b6df139a83d27140f766a495"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1762,7 +1744,7 @@ version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c8fff891139ee62800da71b7fd5b508d570b9ad95e614a53c6f453ca08366038"
 dependencies = [
- "arbitrary 1.3.1",
+ "arbitrary",
  "cc",
  "once_cell",
 ]
@@ -3333,7 +3315,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ffe5856b6e06e8d37dad11167111e49339a5b017ab1399f7cb708fcb4c4550d0"
 dependencies = [
  "anyhow",
- "arbitrary 1.3.1",
+ "arbitrary",
  "flagset",
  "indexmap 2.2.6",
  "leb128",
@@ -3710,7 +3692,7 @@ dependencies = [
 name = "wasmtime-environ-fuzz"
 version = "0.0.0"
 dependencies = [
- "arbitrary 1.3.2",
+ "arbitrary",
  "component-fuzz-util",
  "env_logger",
  "libfuzzer-sys",
@@ -3754,7 +3736,7 @@ name = "wasmtime-fuzz"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "arbitrary 1.3.2",
+ "arbitrary",
  "component-fuzz-util",
  "component-test-util",
  "cranelift-codegen",
@@ -3783,7 +3765,7 @@ name = "wasmtime-fuzzing"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "arbitrary 1.3.2",
+ "arbitrary",
  "component-fuzz-util",
  "component-test-util",
  "env_logger",

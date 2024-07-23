@@ -226,7 +226,7 @@ cranelift-jit = { path = "cranelift/jit", version = "0.111.0" }
 cranelift-fuzzgen = { path = "cranelift/fuzzgen" }
 cranelift-bforest = { path = "cranelift/bforest", version = "0.111.0" }
 cranelift-bitset = { path = "cranelift/bitset", version = "0.111.0" }
-cranelift-control = { path = "cranelift/control", version = "0.111.0" }
+cranelift-control = { path = "cranelift/control", version = "0.111.0", default-features = false }
 cranelift = { path = "cranelift/umbrella", version = "0.111.0" }
 
 winch-codegen = { path = "winch/codegen", version = "=0.22.0" }
