@@ -408,12 +408,11 @@ where
                     .expect("arg should be associated to a register");
 
                 match &ty {
-                    I32 | I64 | F32 | F64 => self.masm.store(src.into(), addr, ty.into()),
+                    I32 | I64 | F32 | F64 | V128 => self.masm.store(src.into(), addr, ty.into()),
                     Ref(rt) => match rt.heap_type {
                         WasmHeapType::Func => self.masm.store_ptr(src.into(), addr),
                         ht => unimplemented!("Support for WasmHeapType: {ht}"),
                     },
-                    _ => unimplemented!("Support for WasmType {ty}"),
                 }
             });
     }
@@ -724,6 +723,7 @@ where
             let dst = match ty {
                 WasmValType::I32 | WasmValType::I64 => self.context.any_gpr(self.masm),
                 WasmValType::F32 | WasmValType::F64 => self.context.any_fpr(self.masm),
+                WasmValType::V128 => self.context.reg_for_type(ty, self.masm),
                 _ => unreachable!(),
             };
 
